@@ -137,6 +137,28 @@ describe("transform (functions)", () => {
       });
     }
   });
+
+  it("correctly handles async arrow functions containing await", () => {
+    const result = transform(`
+      /** @untyped */
+      export const fetchData = async (url: string) => {
+        const response = await fetch(url);
+        return response.json();
+      }
+    `);
+
+    expectCodeToMatch(result, /export const fetchData = ([\S\s]*)$/, {
+      $schema: {
+        type: "function",
+        args: [
+          {
+            name: "url",
+            type: "string",
+          },
+        ],
+      },
+    });
+  });
 });
 
 describe("transform (jsdoc)", () => {
